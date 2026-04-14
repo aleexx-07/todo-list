@@ -10,7 +10,7 @@ function TaskItem({ nombreTarea, onDelete }) {
       <input type="checkbox" />
       <p className='task-name'>{nombreTarea}</p>
 
-    <button className='btn-eliminar' onClick={() => onDelete({ nombreTarea })}>
+    <button className='btn-eliminar' onClick={onDelete}>
         <img src="../public/papelera-transparente.png" className="img-cerrada"/>
         <img src="../public/papelera-negra.png" className="img-abierta"/>
       </button>

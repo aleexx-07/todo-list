@@ -5,48 +5,32 @@ import TaskItem from './TaskItem/TaskItem'
 import { useEffect } from 'react'
 
 function App() {
-  // 🔹 Cargar tareas desde localStorage (seguro)
-  const [tasks, setTasks] = useState(() => {
-    try {
-      const savedTasks = localStorage.getItem("tasks");
+  
+let [tasks, setTasks] = useState ([]);
 
-      if (!savedTasks) return [];
+useEffect (() => {
+  const tasks = localStorage.getItem('tasks');
+  if (tasks) {
+    setTasks(JSON.parse(tasks));
+  }
+}, [])
 
-      const parsed = JSON.parse(savedTasks);
+  let addTask = (newTask) => {
+    const newTasks = ([...tasks, newTask]);
+    setTasks(newTasks)
+    localStorage.setItem('tasks',JSON.stringify(newTasks))
+  }
 
-      return Array.isArray(parsed) ? parsed : [];
-    } catch (error) {
-      console.error("Error leyendo localStorage:", error);
-      return [];
+  let deleteTask = (task) => {
+    let newTasks = tasks.filter(el => el.nombreTarea !== task.nombreTarea);
+    setTasks(newTasks)
+    localStorage.setItem("tasks",JSON.stringify(newTasks))
     }
-  });
-
-  const [input, setInput] = useState("");
-
-  // 🔹 Añadir tarea
-  const addTask = () => {
-    if (!input.trim()) return;
-
-    const newTasks = [...tasks, { id: Date.now(), text: input }];
-
-    setTasks(newTasks);
-    localStorage.setItem("tasks", JSON.stringify(newTasks)); // 🔥 guardar
-
-    setInput("");
-  };
-
-  // 🔹 Eliminar tarea
-  const deleteTask = (id) => {
-    const newTasks = tasks.filter((task) => task.id !== id);
-
-    setTasks(newTasks);
-    localStorage.setItem("tasks", JSON.stringify(newTasks)); // 🔥 guardar
-  };
 
   return (
     <>
       <h1>Lista de Tareas</h1>
-      {tasks.map(el => <TaskItem nombreTarea={el.nombreTarea.getItem()} onDelete={deleteTask}/>) }
+      {tasks.map((taskItem) => <TaskItem key={taskItem.nombreTarea} nombreTarea={taskItem.nombreTarea} onDelete={() => deleteTask(taskItem)}/>) }
       <p className='add-task'>Agregar nueva tarea...</p>
       <TaskForm onAddTask={addTask} />
     </>
